@@ -185,3 +185,18 @@ book-management-api
 * Kitap bulunamadığında `404 Not Found` döndürme
 * Local `data/books.json` dosyasından okuma/yazma
 * Controller, Service, DTO ve Entity yapısını kullanma
+
+## Son Revizyon
+
+Gelen geri bildirimler doğrultusunda proje yapısı NestJS standartlarına daha uygun hale getirildi.
+
+Yapılan geliştirmeler:
+
+* BooksModule oluşturuldu.
+* BooksController ve BooksService, BooksModule içine taşındı.
+* AppModule sadeleştirildi.
+* Global ValidationPipe eklendi.
+* class-validator ve class-transformer paketleri kuruldu.
+* CreateBookDto ve UpdateBookDto için validation kuralları eklendi.
+* DTO dışında gönderilen alanların engellenmesi sağlandı.
+* Hatalı veri gönderimlerinde 400 Bad Request response dönmesi sağlandı.
