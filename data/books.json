@@ -26,5 +26,12 @@
     "author": "J.K. Rowling",
     "year": 1997,
     "genre": "Fantastik"
+  },
+  {
+    "id": "1781286743313",
+    "title": "Validation Test",
+    "author": "Test Author",
+    "year": 2026,
+    "genre": "Test"
   }
 ]

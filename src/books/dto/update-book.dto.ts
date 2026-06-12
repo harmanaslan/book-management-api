@@ -1,6 +1,23 @@
+import { IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
+
 export class UpdateBookDto {
-    title?: string;
-    author?: string;
-    year?: number;
-    genre?: string;
+  @IsOptional()
+  @IsString()
+  @IsNotEmpty()
+  title?: string;
+
+  @IsOptional()
+  @IsString()
+  @IsNotEmpty()
+  author?: string;
+
+  @IsOptional()
+  @IsNumber()
+  @IsNotEmpty()
+  year?: number;
+
+  @IsOptional()
+  @IsString()
+  @IsNotEmpty()
+  genre?: string;
 }
