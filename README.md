@@ -200,3 +200,69 @@ Yapılan geliştirmeler:
 * CreateBookDto ve UpdateBookDto için validation kuralları eklendi.
 * DTO dışında gönderilen alanların engellenmesi sağlandı.
 * Hatalı veri gönderimlerinde 400 Bad Request response dönmesi sağlandı.
+
+
+2.TASK
+
+Bu repository içinde ikinci aşama olarak basit bir Task Planner API geliştirilmiştir.
+
+Bu yapı basit bir Jira alternatifi mantığında hazırlanmıştır.
+
+### Kullanılan Yapılar
+
+- MongoDB
+- Mongoose
+- JWT Authentication
+- Role Guard
+- Admin / User rol ayrımı
+- DTO validation
+- bcryptjs ile password hashing
+
+### Auth Endpointleri
+
+- POST /auth/register
+- POST /auth/login
+- GET /auth/profile
+- GET /auth/admin-test
+
+### Project Endpointleri
+
+- POST /projects
+- GET /projects
+
+### Task Endpointleri
+
+- POST /tasks
+- GET /tasks/my-tasks
+- PATCH /tasks/:id/status
+
+### Roller
+
+ADMIN:
+
+- Proje oluşturabilir.
+- Task oluşturabilir.
+- Taskı bir user’a atayabilir.
+
+USER:
+
+- Kendine atanmış taskları görebilir.
+- Kendi task statusunu güncelleyebilir.
+
+### Task Status Değerleri
+
+- TODO
+- IN_PROGRESS
+- DONE
+
+### Tamamlanan Özellikler
+
+- Kullanıcı register/login işlemleri yapıldı.
+- Şifreler bcryptjs ile hashlenerek MongoDB’ye kaydedildi.
+- Login sonrası JWT accessToken üretildi.
+- JwtAuthGuard ile token kontrolü yapıldı.
+- RolesGuard ile ADMIN / USER yetki ayrımı yapıldı.
+- ADMIN rolündeki kullanıcı proje oluşturabilir hale getirildi.
+- ADMIN rolündeki kullanıcı task oluşturup user’a atayabilir hale getirildi.
+- USER rolündeki kullanıcı sadece kendine atanmış taskları görebilir hale getirildi.
+- USER rolündeki kullanıcı kendi task statusunu TODO, IN_PROGRESS veya DONE olarak güncelleyebilir hale getirildi.
