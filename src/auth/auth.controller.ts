@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Post, Req, UseGuards,HttpCode,HttpStatus } from '@nestjs/common';
 import type { Request } from 'express';
 import { AuthService } from './auth.service';
 import { RegisterDto } from './dto/register.dto';
@@ -13,17 +13,20 @@ export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Post('register')
+  @HttpCode(HttpStatus.CREATED)
   register(@Body() registerDto: RegisterDto) {
     return this.authService.register(registerDto);
   }
 
   @Post('login')
+  @HttpCode(HttpStatus.OK)
   login(@Body() loginDto: LoginDto) {
     return this.authService.login(loginDto);
   }
 
   @Get('profile')
   @UseGuards(JwtAuthGuard)
+  @HttpCode(HttpStatus.OK)
   profile(@Req() request: Request) {
     return {
       message: 'Profile accessed successfully',
@@ -33,6 +36,7 @@ export class AuthController {
   @Get('admin-test')
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Roles(UserRole.ADMIN)
+@HttpCode(HttpStatus.OK)
 adminTest(@Req() request: Request) {
   return {
     message: 'Admin endpoint accessed successfully',

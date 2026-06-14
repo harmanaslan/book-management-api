@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Post, Req, UseGuards,HttpCode,HttpStatus } from '@nestjs/common';
 import type { Request } from 'express';
 import { ProjectsService } from './projects.service';
 import { CreateProjectDto } from './dto/create-project.dto';
@@ -14,6 +14,7 @@ export class ProjectsController {
   @Post()
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRole.ADMIN)
+  @HttpCode(HttpStatus.CREATED)
   create(@Body() createProjectDto: CreateProjectDto, @Req() request: Request) {
     const user = request['user'];
 
@@ -22,6 +23,7 @@ export class ProjectsController {
 
   @Get()
   @UseGuards(JwtAuthGuard)
+  @HttpCode(HttpStatus.OK)
   findAll() {
     return this.projectsService.findAll();
   }

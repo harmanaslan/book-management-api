@@ -7,6 +7,8 @@ import {
     Post,
     Req,
     UseGuards,
+    HttpCode,
+    HttpStatus,
   } from '@nestjs/common';
   import type { Request } from 'express';
   import { TasksService } from './tasks.service';
@@ -24,6 +26,7 @@ import {
     @Post()
     @UseGuards(JwtAuthGuard, RolesGuard)
     @Roles(UserRole.ADMIN)
+    @HttpCode(HttpStatus.CREATED)
     create(@Body() createTaskDto: CreateTaskDto, @Req() request: Request) {
       const user = request['user'];
   
@@ -32,6 +35,7 @@ import {
   
     @Get('my-tasks')
     @UseGuards(JwtAuthGuard)
+    @HttpCode(HttpStatus.OK)
     findMyTasks(@Req() request: Request) {
       const user = request['user'];
   
@@ -40,6 +44,7 @@ import {
   
     @Patch(':id/status')
     @UseGuards(JwtAuthGuard)
+    @HttpCode(HttpStatus.OK)
     updateStatus(
       @Param('id') id: string,
       @Body() updateTaskStatusDto: UpdateTaskStatusDto,
