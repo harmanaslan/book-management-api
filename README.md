@@ -255,7 +255,7 @@ USER:
 - IN_PROGRESS
 - DONE
 
-### Tamamlanan Özellikler
+### Tamamlanan Özellikler 14.06.2026 00:17
 
 - Kullanıcı register/login işlemleri yapıldı.
 - Şifreler bcryptjs ile hashlenerek MongoDB’ye kaydedildi.
@@ -266,3 +266,41 @@ USER:
 - ADMIN rolündeki kullanıcı task oluşturup user’a atayabilir hale getirildi.
 - USER rolündeki kullanıcı sadece kendine atanmış taskları görebilir hale getirildi.
 - USER rolündeki kullanıcı kendi task statusunu TODO, IN_PROGRESS veya DONE olarak güncelleyebilir hale getirildi.
+
+## Feedback geliştirmeleri 14.06.2026   16:15
+
+Gelen feedbackler doğrultusunda proje üzerinde ek geliştirmeler yapılmıştır.
+
+ Eklenen Geliştirmeler:
+
+- src/commons klasör yapısı oluşturuldu.
+- constants, dto, filters, interfaces ve utils klasörleri eklendi.
+- Pagination için ortak PaginationQueryDto oluşturuldu.
+- Books endpointine genre, author ve createdBy filtreleme eklendi.
+- Books endpointine page ve limit parametreleriyle pagination eklendi.
+- Magic number kullanımını azaltmak için APP_CONSTANTS yapısı eklendi.
+- Global Exception Filter oluşturuldu.
+- Error response formatı merkezi hale getirildi.
+- Controller endpointlerine HTTP status kodları eklendi.
+
+ Örnek Books Query Kullanımları:
+
+GET /books?page=1&limit=2
+
+GET /books?genre=Roman
+
+GET /books?author=George%20Orwell
+
+GET /books?createdBy=user
+
+GET /books?createdBy=admin&page=1&limit=2
+
+- Standart Error Response Formatı
+
+{
+  "success": false,
+  "statusCode": 404,
+  "timestamp": "2026-06-14T13:04:06.778Z",
+  "path": "/books/999",
+  "message": "Book with id 999 not found"
+}
