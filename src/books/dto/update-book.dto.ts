@@ -20,4 +20,9 @@ export class UpdateBookDto {
   @IsString()
   @IsNotEmpty()
   genre?: string;
+
+  @IsOptional()
+  @IsString()
+  @IsNotEmpty()
+  createdBy?: string;
 }
