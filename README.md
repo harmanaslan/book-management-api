@@ -305,19 +305,19 @@ GET /books?createdBy=admin&page=1&limit=2
   "message": "Book with id 999 not found"
 }
 
-## Second Feedback Improvements
+## Second Feedback Improvements - 17.06.2026 22:48
 
-Bu geliştirme adımında proje daha profesyonel NestJS yapısına yaklaştırılmıştır.
+Bu geliştirme adımında proje daha profesyonel bir NestJS yapısına yaklaştırılmıştır.
 
-- Async file operations with fs.promises
-- Global response interceptor
-- Logging interceptor
-- Explicit response types
-- MongoDB ObjectId validation pipe
-- Swagger API documentation
-- Swagger DTO decorators
-- Books module migrated from local JSON storage to MongoDB/Mongoose
-- ObjectId validation applied to Books detail, update and delete endpoints
+- `book.service.ts` içinde kullanılan senkron dosya işlemleri kaldırıldı.
+- Books modülü local `data/books.json` yapısından MongoDB/Mongoose yapısına taşındı.
+- Başarılı response'ları standart hale getirmek için global response interceptor eklendi.
+- Gelen isteklerde method, URL, status code ve işlem süresini takip etmek için logging interceptor eklendi.
+- Controller endpointlerinde dönüş tipleri daha net hale getirildi.
+- MongoDB ObjectId doğrulaması için `ParseObjectIdPipe` eklendi.
+- Books detail, update ve delete endpointlerinde ObjectId doğrulaması uygulandı.
+- Swagger API dokümantasyonu projeye entegre edildi.
+- DTO dosyalarına Swagger için `@ApiProperty` ve `@ApiPropertyOptional` decorator'ları eklendi.
 
 Swagger dokümantasyonu:
 
