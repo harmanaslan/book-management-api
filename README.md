@@ -304,3 +304,23 @@ GET /books?createdBy=admin&page=1&limit=2
   "path": "/books/999",
   "message": "Book with id 999 not found"
 }
+
+## Second Feedback Improvements
+
+Bu geliştirme adımında proje daha profesyonel NestJS yapısına yaklaştırılmıştır.
+
+- Async file operations with fs.promises
+- Global response interceptor
+- Logging interceptor
+- Explicit response types
+- MongoDB ObjectId validation pipe
+- Swagger API documentation
+- Swagger DTO decorators
+- Books module migrated from local JSON storage to MongoDB/Mongoose
+- ObjectId validation applied to Books detail, update and delete endpoints
+
+Swagger dokümantasyonu:
+
+http://localhost:3000/api-docs
+
+Not: Books verileri artık `data/books.json` dosyasında değil, MongoDB üzerinde tutulur.

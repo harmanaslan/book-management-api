@@ -1,148 +1,98 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { join } from 'path';
-import { readFileSync, writeFileSync } from 'fs';
-import type { Book } from './entities/book.entity';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
 import { CreateBookDto } from './dto/create-book.dto';
 import { UpdateBookDto } from './dto/update-book.dto';
 import { FilterBooksDto } from './dto/filter-books.dto';
+import { Book, BookDocument } from './schemas/book.schema';
 import { APP_CONSTANTS } from '../commons/constants/app.constants';
+import type { PaginatedResponse } from '../commons/interfaces/paginated-response.interface';
 
 @Injectable()
 export class BooksService {
-private readonly filePath = join(process.cwd(), 'data', 'books.json');
+  constructor(
+    @InjectModel(Book.name)
+    private readonly bookModel: Model<BookDocument>,
+  ) {}
 
-private readBooks(): Book[] {
-const data = readFileSync(this.filePath, 'utf-8');
-return JSON.parse(data);
-}
+  async findAll(
+    filters: FilterBooksDto,
+  ): Promise<PaginatedResponse<BookDocument>> {
+    const query: Record<string, unknown> = {};
 
-private writeBooks(books: Book[]): void {
-writeFileSync(this.filePath, JSON.stringify(books, null, 2));
-}
+    const page = filters.page ?? APP_CONSTANTS.DEFAULT_PAGE;
+    const limit = filters.limit ?? APP_CONSTANTS.DEFAULT_LIMIT;
 
-findAll(filters: FilterBooksDto) {
-const books = this.readBooks();
+    if (filters.genre) {
+      query.genre = { $regex: filters.genre, $options: 'i' };
+    }
 
+    if (filters.author) {
+      query.author = { $regex: filters.author, $options: 'i' };
+    }
 
-const page = filters.page ?? APP_CONSTANTS.DEFAULT_PAGE;
-const limit = filters.limit ?? APP_CONSTANTS.DEFAULT_LIMIT;
+    if (filters.createdBy) {
+      query.createdBy = { $regex: filters.createdBy, $options: 'i' };
+    }
 
-let filteredBooks = books;
+    const skip = (page - 1) * limit;
+    const [data, total] = await Promise.all([
+      this.bookModel.find(query).skip(skip).limit(limit).exec(),
+      this.bookModel.countDocuments(query).exec(),
+    ]);
 
-if (filters.genre) {
-  filteredBooks = filteredBooks.filter((book) =>
-    book.genre.toLowerCase().includes(filters.genre!.toLowerCase()),
-  );
-}
+    return {
+      data,
+      meta: {
+        total,
+        page,
+        limit,
+        totalPages: Math.ceil(total / limit),
+      },
+    };
+  }
 
-if (filters.author) {
-  filteredBooks = filteredBooks.filter((book) =>
-    book.author.toLowerCase().includes(filters.author!.toLowerCase()),
-  );
-}
+  async findOne(id: string): Promise<BookDocument> {
+    const book = await this.bookModel.findById(id).exec();
 
-if (filters.createdBy) {
-  filteredBooks = filteredBooks.filter((book) =>
-    book.createdBy.toLowerCase().includes(filters.createdBy!.toLowerCase()),
-  );
-}
+    if (!book) {
+      throw new NotFoundException(`Book with id ${id} not found`);
+    }
 
-const total = filteredBooks.length;
-const startIndex = (page - 1) * limit;
-const endIndex = startIndex + limit;
+    return book;
+  }
 
-const data = filteredBooks.slice(startIndex, endIndex);
+  async create(createBookDto: CreateBookDto): Promise<BookDocument> {
+    return this.bookModel.create(createBookDto);
+  }
 
-return {
-  data,
-  meta: {
-    total,
-    page,
-    limit,
-    totalPages: Math.ceil(total / limit),
-  },
-};
+  async update(
+    id: string,
+    updateBookDto: UpdateBookDto,
+  ): Promise<BookDocument> {
+    const book = await this.bookModel
+      .findByIdAndUpdate(id, updateBookDto, {
+        new: true,
+        runValidators: true,
+      })
+      .exec();
 
+    if (!book) {
+      throw new NotFoundException(`Book with id ${id} not found`);
+    }
 
-}
+    return book;
+  }
 
-findOne(id: string): Book {
-const books = this.readBooks();
+  async remove(id: string): Promise<{ message: string }> {
+    const book = await this.bookModel.findByIdAndDelete(id).exec();
 
+    if (!book) {
+      throw new NotFoundException(`Book with id ${id} not found`);
+    }
 
-const book = books.find((book) => book.id === id);
-
-if (!book) {
-  throw new NotFoundException(`Book with id ${id} not found`);
-}
-
-return book;
-
-
-}
-
-create(createBookDto: CreateBookDto): Book {
-const books = this.readBooks();
-
-
-const newBook: Book = {
-  id: Date.now().toString(),
-  ...createBookDto,
-};
-
-books.push(newBook);
-
-this.writeBooks(books);
-
-return newBook;
-
-
-}
-
-update(id: string, updateBookDto: UpdateBookDto): Book {
-const books = this.readBooks();
-
-
-const book = books.find((book) => book.id === id);
-
-if (!book) {
-  throw new NotFoundException(`Book with id ${id} not found`);
-}
-
-const updatedBook: Book = {
-  ...book,
-  ...updateBookDto,
-};
-
-const updatedBooks = books.map((book) =>
-  book.id === id ? updatedBook : book,
-);
-
-this.writeBooks(updatedBooks);
-
-return updatedBook;
-
-
-}
-
-remove(id: string): { message: string } {
-const books = this.readBooks();
-
-
-const book = books.find((book) => book.id === id);
-
-if (!book) {
-  throw new NotFoundException(`Book with id ${id} not found`);
-}
-
-const filteredBooks = books.filter((book) => book.id !== id);
-
-this.writeBooks(filteredBooks);
-
-return {
-  message: `Book with id ${id} deleted successfully`,
-};
-
-
-}
+    return {
+      message: `Book with id ${id} deleted successfully`,
+    };
+  }
 }
